@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/practice?useUnicode=true&characterEncoding=UTF-8
+    driverClassName: com.mysql.jdbc.Driver
+    username: root
+    password:
+  jpa:
+    hibernate.ddl-auto: update
+    show-sql: false
+    database: default
+  data.jpa:
+    repositories.enabled: true
+
+management:
+  server.port: 8081
+  endpoints.web.exposure.include: '*'
