@@ -8,8 +8,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 @Slf4j
 public class FooService {
@@ -18,6 +16,6 @@ public class FooService {
     private FooRepository fooRepository;
 
     public Page<User> getFoos() {
-        return fooRepository.findAll(new PageRequest(0,100000));
+        return fooRepository.findAll(new PageRequest(0,100));
     }
 }

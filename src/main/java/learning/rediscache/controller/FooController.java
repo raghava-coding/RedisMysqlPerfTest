@@ -1,14 +1,13 @@
 package learning.rediscache.controller;
 
-import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
 import learning.rediscache.domain.User;
 import learning.rediscache.service.FooService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -21,22 +20,21 @@ public class FooController {
     @Autowired
     private FooService fooService;
 
-    private Counter counter = null;
+    private Timer timer = null;
 
     @Autowired
     FooController(MeterRegistry meterRegistry) {
-        counter = Counter
-                .builder("test-raghava")
-                .description("indicates instance count of the object")
-                .tags("dev", "performance")
+        timer = Timer
+                .builder("requests_latency_seconds")
+                .description("Request latency in seconds.")
                 .register(meterRegistry);
     }
 
 
-    @RequestMapping(value = "/test", method = RequestMethod.GET)
-    public List<User> test() {
-        counter.increment(1000);
-        return fooService.getFoos().getContent();
+    @GetMapping(value = "/test")
+    public List<User> test() throws Exception {
+        timer.count();
+        return timer.recordCallable(() -> fooService.getFoos().getContent());
     }
 
 }
