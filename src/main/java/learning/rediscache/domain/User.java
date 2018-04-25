@@ -4,12 +4,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
-@Table(name = "user_details")
+@Table(name = "user_details_bk")
 @Data
 @NoArgsConstructor
-public class User {
+public class User implements Serializable{
     @Id
     @GeneratedValue
     @Column(name = "user_id")

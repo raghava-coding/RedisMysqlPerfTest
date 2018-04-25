@@ -1,11 +1,11 @@
 package learning.rediscache.controller;
 
-import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.Timer;
+import io.micrometer.core.annotation.Timed;
 import learning.rediscache.domain.User;
 import learning.rediscache.service.FooService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,21 +20,17 @@ public class FooController {
     @Autowired
     private FooService fooService;
 
-    private Timer timer = null;
-
-    @Autowired
-    FooController(MeterRegistry meterRegistry) {
-        timer = Timer
-                .builder("requests_latency_seconds")
-                .description("Request latency in seconds.")
-                .register(meterRegistry);
+    @GetMapping(value = "/test")
+    @Timed(value = "requests_latency_seconds")
+    public List<User> test() throws Exception {
+        return fooService.getFoos();
     }
 
-
-    @GetMapping(value = "/test")
-    public List<User> test() throws Exception {
-        timer.count();
-        return timer.recordCallable(() -> fooService.getFoos().getContent());
+    @GetMapping(value = "/test/cache")
+    @Cacheable(value = "test-cache")
+    @Timed(value = "cache_requests_latency_seconds")
+    public List<User> testCache() throws Exception {
+        return fooService.getFoos();
     }
 
 }
